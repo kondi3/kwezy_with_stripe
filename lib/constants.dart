@@ -1,0 +1,2 @@
+const SECRET_KEY =
+    'sk_test_51MMEjpFmStvzW5sWrHBCZPRbw5YyMNK90yKPzKuUhlpq7G1nWTGKdgI7DhfsMIO9wXw7QeUiWhpXosLsh4BjTxKH00XYhDF1oB';
