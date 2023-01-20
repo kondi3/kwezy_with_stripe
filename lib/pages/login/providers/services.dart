@@ -12,8 +12,10 @@ class AuthServices {
 
     if (!user.exists) {
       await FirebaseFirestore.instance.collection("users").doc(id).set({
+        "id": id,
         "name": name,
         "phone": phone,
+        "dateCreated": DateTime.now(),
       });
     }
   }

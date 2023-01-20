@@ -1,5 +1,4 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:kwezy_with_stripe/controllers/pages_controller.dart';
 import 'package:kwezy_with_stripe/main.dart';
 import 'package:kwezy_with_stripe/utils/consts.dart';
 import 'package:flutter/material.dart';
@@ -46,7 +45,9 @@ class _VerificationPageState extends State<VerificationPage> {
                 ),
               ),
             ),
-            SizedBox(height: 20,),
+            SizedBox(
+              height: 20,
+            ),
             Container(
               padding: EdgeInsets.all(16),
               width: MediaQuery.of(context).size.width,
@@ -68,14 +69,19 @@ class _VerificationPageState extends State<VerificationPage> {
                       ),
                       (route) => false,
                     );
-                  } catch (e) {}
-
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => PagesController(),
-                    ),
-                  );
+                  } catch (e) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(e.toString()),
+                      ),
+                    );
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => VeppoApp(),
+                      ),
+                    );
+                  }
                 },
                 style: ButtonStyle(
                   backgroundColor: MaterialStateProperty.resolveWith<Color>(

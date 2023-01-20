@@ -1,9 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:kwezy_with_stripe/controllers/pages_controller.dart';
 import 'package:kwezy_with_stripe/pages/login/verification_page.dart';
 import 'package:kwezy_with_stripe/utils/consts.dart';
 import 'package:flutter/material.dart';
-import 'package:kwezy_with_stripe/utils/consts.dart';
 
 class LoginPage extends StatefulWidget {
   @override
