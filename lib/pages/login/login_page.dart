@@ -38,6 +38,7 @@ class _LoginPageState extends State<LoginPage> {
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: TextField(
+                controller: phoneCtlr,
                 keyboardType: TextInputType.number,
                 style: TextStyle(
                   color: Colors.black38,

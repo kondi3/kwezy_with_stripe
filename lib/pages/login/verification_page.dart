@@ -12,7 +12,7 @@ class VerificationPage extends StatefulWidget {
 }
 
 class _VerificationPageState extends State<VerificationPage> {
-  TextEditingController nameCtlr = TextEditingController();
+  TextEditingController numberCtlr = TextEditingController();
   bool isLoading = false;
 
   @override
@@ -33,6 +33,7 @@ class _VerificationPageState extends State<VerificationPage> {
               padding: const EdgeInsets.all(16.0),
               child: TextField(
                 keyboardType: TextInputType.number,
+                controller: numberCtlr,
                 style: TextStyle(color: Colors.black38),
                 decoration: InputDecoration(
                   labelText: "6 digit code",
@@ -55,7 +56,7 @@ class _VerificationPageState extends State<VerificationPage> {
                 onPressed: () async {
                   final credintials = PhoneAuthProvider.credential(
                     verificationId: widget.verificationCode,
-                    smsCode: nameCtlr.text,
+                    smsCode: numberCtlr.text,
                   );
 
                   try {
