@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:kwezy_with_stripe/pages/login/verification_page.dart';
 import 'package:kwezy_with_stripe/utils/consts.dart';
@@ -11,6 +13,8 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   TextEditingController phoneCtlr = TextEditingController();
   TextEditingController passwordCtlr = TextEditingController();
+
+  bool isBusy = false;
 
   @override
   Widget build(BuildContext context) {
@@ -39,15 +43,17 @@ class _LoginPageState extends State<LoginPage> {
               padding: const EdgeInsets.all(16.0),
               child: TextField(
                 controller: phoneCtlr,
-                keyboardType: TextInputType.number,
+                keyboardType: TextInputType.phone,
                 style: TextStyle(
                   color: Colors.black38,
                 ),
+                cursorColor: Colors.black87,
                 decoration: InputDecoration(
                   prefixIcon: Icon(
                     Icons.contact_mail,
                     color: Colors.black,
                   ),
+                  hintText: "+265 888 888 888",
                   labelText: "Phone Number",
                   labelStyle: TextStyle(
                     color: Colors.black,
@@ -129,78 +135,109 @@ class _LoginPageState extends State<LoginPage> {
             Container(
               padding: EdgeInsets.all(16),
               width: MediaQuery.of(context).size.width,
-              child: ElevatedButton(
-                onPressed: () async {
-                  FirebaseAuth _auth = FirebaseAuth.instance;
+              child: isBusy
+                  ? Center(
+                      child: CircularProgressIndicator(
+                        color: Colors.blue,
+                      ),
+                    )
+                  : ElevatedButton(
+                      onPressed: () async {
+                        // Check if input is not empty to proceed
+                        if (phoneCtlr.text.isNotEmpty) {
+                          setState(() {
+                            isBusy = true;
+                          });
 
-                  _auth.verifyPhoneNumber(
-                    phoneNumber: phoneCtlr.text,
-                    verificationCompleted: (_) {},
-                    verificationFailed: (e) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(
-                            e.toString(),
+                          FirebaseAuth _auth = FirebaseAuth.instance;
+
+                          _auth.verifyPhoneNumber(
+                            phoneNumber: phoneCtlr.text,
+                            verificationCompleted: (_) {},
+                            verificationFailed: (e) {
+                              setState(() {
+                                isBusy = false;
+                              });
+
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    e.toString(),
+                                  ),
+                                ),
+                              );
+                            },
+                            codeSent: (String verificationCode, int? token) {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => VerificationPage(
+                                    verificationCode: verificationCode,
+                                    phoneNumber: phoneCtlr.text,
+                                  ),
+                                ),
+                              );
+                            },
+                            codeAutoRetrievalTimeout: (e) {
+                              setState(() {
+                                isBusy = false;
+                              });
+
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(e.toString()),
+                                ),
+                              );
+                            },
+                          );
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                  "Please provide your phone number to proceed!"),
+                            ),
+                          );
+                        }
+                        // ConfirmationResult verifyCode =
+                        //     await _auth.signInWithPhoneNumber(
+                        //   phoneCtlr.text,
+                        // );
+
+                        // Navigator.push(
+                        //   context,
+                        //   MaterialPageRoute(
+                        //     builder: (context) => VerificationPage(
+                        //         verificationCode: verifyCode.verificationId),
+                        //   ),
+                        // );
+
+                        // Navigator.push(
+                        //   context,
+                        //   MaterialPageRoute(
+                        //     builder: (context) => PagesController(),
+                        //   ),
+                        // );
+                      },
+                      style: ButtonStyle(
+                        backgroundColor:
+                            MaterialStateProperty.resolveWith<Color>(
+                          (Set<MaterialState> states) {
+                            if (states.contains(MaterialState.pressed))
+                              return veppoLightGrey;
+                            return Color(0xFF3b7cfa);
+                          },
+                        ),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(0, 16, 0, 16),
+                        child: Text(
+                          'Sign in',
+                          style: TextStyle(
+                            color: Colors.white,
                           ),
                         ),
-                      );
-                    },
-                    codeSent: (String verificationCode, int? token) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => VerificationPage(
-                              verificationCode: verificationCode),
-                        ),
-                      );
-                    },
-                    codeAutoRetrievalTimeout: (e) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(e.toString()),
-                        ),
-                      );
-                    },
-                  );
-                  // ConfirmationResult verifyCode =
-                  //     await _auth.signInWithPhoneNumber(
-                  //   phoneCtlr.text,
-                  // );
-
-                  // Navigator.push(
-                  //   context,
-                  //   MaterialPageRoute(
-                  //     builder: (context) => VerificationPage(
-                  //         verificationCode: verifyCode.verificationId),
-                  //   ),
-                  // );
-
-                  // Navigator.push(
-                  //   context,
-                  //   MaterialPageRoute(
-                  //     builder: (context) => PagesController(),
-                  //   ),
-                  // );
-                },
-                style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.resolveWith<Color>(
-                    (Set<MaterialState> states) {
-                      if (states.contains(MaterialState.pressed))
-                        return veppoLightGrey;
-                      return Color(0xFF3b7cfa);
-                    },
-                  ),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(0, 16, 0, 16),
-                  child: Text(
-                    'Sign in',
-                    style: TextStyle(
-                      color: Colors.white,
+                      ),
                     ),
-                  ),
-                ),
-              ),
             ),
           ],
         ),

@@ -1,3 +1,6 @@
+// ignore_for_file: prefer_const_constructors
+
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:kwezy_with_stripe/pages/search/search_page.dart';
 import 'package:kwezy_with_stripe/pages/trips/trips_page.dart';
 import 'package:kwezy_with_stripe/utils/consts.dart';
@@ -11,6 +14,8 @@ class PagesController extends StatefulWidget {
 class _PagesControllerState extends State<PagesController> {
   PageController _pageController = PageController(initialPage: 0);
   int bottomNavigationIndex = 0;
+
+  bool isBusy = false;
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +32,27 @@ class _PagesControllerState extends State<PagesController> {
           ),
           Container(
             child: Center(
-              child: Text('Profile'),
+              child: isBusy
+                  ? CircularProgressIndicator(
+                      color: Colors.blue,
+                    )
+                  : Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text('Profile'),
+                        ElevatedButton.icon(
+                          onPressed: () async {
+                            setState(() {
+                              isBusy = true;
+                            });
+
+                            await FirebaseAuth.instance.signOut();
+                          },
+                          icon: Icon(Icons.logout),
+                          label: Text("Sign Out"),
+                        ),
+                      ],
+                    ),
             ),
           ),
         ],
