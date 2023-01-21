@@ -1,9 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:kwezy_with_stripe/controllers/pages_controller.dart';
 import 'package:kwezy_with_stripe/pages/login/verification_page.dart';
 import 'package:kwezy_with_stripe/utils/consts.dart';
 import 'package:flutter/material.dart';
-import 'package:kwezy_with_stripe/utils/consts.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -40,6 +38,7 @@ class _LoginPageState extends State<LoginPage> {
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: TextField(
+                controller: phoneCtlr,
                 keyboardType: TextInputType.number,
                 style: TextStyle(
                   color: Colors.black38,

@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:kwezy_with_stripe/models/bus_model.dart';
 import 'package:kwezy_with_stripe/pages/search/payment_booking_details.dart';
 import 'package:kwezy_with_stripe/utils/consts.dart';
@@ -23,8 +25,32 @@ class SeatsGridPage extends StatefulWidget {
 class _SeatsGridPageState extends State<SeatsGridPage> {
   int seatSelected = -1;
 
-  String customerId = "hadjcabdbjf sbhjfvs";
-  String customerName = "Jamesy Oren";
+  String? customerId;
+  String? customerName;
+
+  Future<String> getName({required String id}) async {
+    var user =
+        await FirebaseFirestore.instance.collection("users").doc(id).get();
+
+    final name = user['name'] as String;
+    return name;
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    final FirebaseAuth _auth = FirebaseAuth.instance;
+
+    final id = _auth.currentUser!.uid;
+
+    setState(() async {
+      String customerNem = await getName(id: id);
+
+      customerName = customerNem;
+      customerId = id;
+    });
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -271,8 +297,8 @@ class _SeatsGridPageState extends State<SeatsGridPage> {
                               MaterialPageRoute(
                                 builder: (BuildContext context) =>
                                     PaymentBookingDetails(
-                                  customerId: customerId,
-                                  customerName: customerName,
+                                  customerId: customerId!,
+                                  customerName: customerName!,
                                   selectedSeat: temp,
                                   bus: widget.bus,
                                   dateSearched: widget.dateAndTime,

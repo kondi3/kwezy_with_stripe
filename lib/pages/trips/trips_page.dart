@@ -1,11 +1,27 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:kwezy_with_stripe/pages/trips/trip_ticket_page.dart';
 import 'package:kwezy_with_stripe/utils/consts.dart';
 import 'package:flutter/material.dart';
 
 class TripsPage extends StatelessWidget {
-  String customerId = "hadjcabdbjf sbhjfvs";
-  String customerName = "Jamesy Oren";
+  TripsPage() {
+    final FirebaseAuth _auth = FirebaseAuth.instance;
+
+    final id = _auth.currentUser!.uid;
+
+    Future getName({required String id}) async {
+      var user =
+          await FirebaseFirestore.instance.collection("users").doc(id).get();
+
+      customerName = user['name'] as String;
+    }
+
+    customerId = id;
+  }
+  String? customerId;
+  String? customerName;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -67,7 +83,7 @@ class TripsPage extends StatelessWidget {
                                       timeOfDepature: snapshot.data.docs[index]
                                           ['timeOfDepature'],
                                       to: snapshot.data.docs[index]['to'],
-                                      customerName: customerName,
+                                      customerName: customerName!,
                                       cost: snapshot.data.docs[index]['cost']
                                           as double,
                                     ),

@@ -1,5 +1,4 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:kwezy_with_stripe/controllers/pages_controller.dart';
 import 'package:kwezy_with_stripe/main.dart';
 import 'package:kwezy_with_stripe/utils/consts.dart';
 import 'package:flutter/material.dart';
@@ -13,7 +12,7 @@ class VerificationPage extends StatefulWidget {
 }
 
 class _VerificationPageState extends State<VerificationPage> {
-  TextEditingController nameCtlr = TextEditingController();
+  TextEditingController numberCtlr = TextEditingController();
   bool isLoading = false;
 
   @override
@@ -34,6 +33,7 @@ class _VerificationPageState extends State<VerificationPage> {
               padding: const EdgeInsets.all(16.0),
               child: TextField(
                 keyboardType: TextInputType.number,
+                controller: numberCtlr,
                 style: TextStyle(color: Colors.black38),
                 decoration: InputDecoration(
                   labelText: "6 digit code",
@@ -46,7 +46,9 @@ class _VerificationPageState extends State<VerificationPage> {
                 ),
               ),
             ),
-            SizedBox(height: 20,),
+            SizedBox(
+              height: 20,
+            ),
             Container(
               padding: EdgeInsets.all(16),
               width: MediaQuery.of(context).size.width,
@@ -54,7 +56,7 @@ class _VerificationPageState extends State<VerificationPage> {
                 onPressed: () async {
                   final credintials = PhoneAuthProvider.credential(
                     verificationId: widget.verificationCode,
-                    smsCode: nameCtlr.text,
+                    smsCode: numberCtlr.text,
                   );
 
                   try {
@@ -68,14 +70,19 @@ class _VerificationPageState extends State<VerificationPage> {
                       ),
                       (route) => false,
                     );
-                  } catch (e) {}
-
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => PagesController(),
-                    ),
-                  );
+                  } catch (e) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(e.toString()),
+                      ),
+                    );
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => VeppoApp(),
+                      ),
+                    );
+                  }
                 },
                 style: ButtonStyle(
                   backgroundColor: MaterialStateProperty.resolveWith<Color>(
